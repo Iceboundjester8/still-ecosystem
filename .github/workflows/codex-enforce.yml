@@ -1,0 +1,36 @@
+﻿name: Codex Enforcement
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  enforce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Block hard-cut terms (basic scan)
+        run: |
+          set -e
+          echo "Scanning for hard-cut terms..."
+          # Add/adjust patterns as needed. Keep it conservative.
+          PATTERN="(mana system|skill tree|quest log|UI meter|progression gate|power escalation|boss fight|xp bar)"
+          if grep -RIn --exclude-dir=.git --exclude-dir=04_Dashboards -E "$PATTERN" . ; then
+            echo "::error::Hard-cut term detected. Remove or rephrase."
+            exit 1
+          fi
+          echo "OK"
+
+      - name: Require PR checklist (when PR exists)
+        if: github.event_name == 'pull_request'
+        run: |
+          set -e
+          BODY="$(jq -r '.pull_request.body // ""' "$GITHUB_EVENT_PATH")"
+          # Require the Final Gate question to exist + one checkbox present
+          echo "$BODY" | grep -qi "Final Gate" || (echo "::error::Missing PR checklist template."; exit 1)
+          echo "$BODY" | grep -qi "\- \[ \] YES" || (echo "::error::Missing checklist checkboxes."; exit 1)
+          echo "Checklist present."

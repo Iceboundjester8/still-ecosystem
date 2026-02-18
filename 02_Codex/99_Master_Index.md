@@ -19,6 +19,8 @@ Notes: This index is additive. Never delete entries; mark Deprecated instead.
   - STILL_Snapshot_Governance_Lock_2026-02-17.md
   - STILL_Snapshot_Feature_Expansion_Infrastructure_2026-02-17.md
   - STILL_Snapshot_Stillwild_Foundation_2026-02-17.md
+  - STILL_Snapshot_Git_Governance_Lock_2026-02-18.md
+
 
 ## 2) Ecosystem Mods (Design Canon)
 ### Still API (Foundation)

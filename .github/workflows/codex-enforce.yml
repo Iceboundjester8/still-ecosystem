@@ -17,20 +17,33 @@ jobs:
         run: |
           set -e
           echo "Scanning for hard-cut terms..."
+
           # Add/adjust patterns as needed. Keep it conservative.
           PATTERN="(mana system|skill tree|quest log|UI meter|progression gate|power escalation|boss fight|xp bar)"
-          if grep -RIn --exclude-dir=.git --exclude-dir=04_Dashboards -E "$PATTERN" . ; then
+
+          # Exclude canon/governance references that may mention banned terms as examples.
+          EXCLUDES="--exclude-dir=.git --exclude-dir=.github --exclude-dir=04_Dashboards --exclude-dir=02_Codex/00_Governance --exclude-dir=03_Snapshots"
+
+          if grep -RIn $EXCLUDES -E "$PATTERN" . ; then
             echo "::error::Hard-cut term detected. Remove or rephrase."
             exit 1
           fi
+
           echo "OK"
+
 
       - name: Require PR checklist (when PR exists)
         if: github.event_name == 'pull_request'
         run: |
           set -e
           BODY="$(jq -r '.pull_request.body // ""' "$GITHUB_EVENT_PATH")"
-          # Require the Final Gate question to exist + one checkbox present
-          echo "$BODY" | grep -qi "Final Gate" || (echo "::error::Missing PR checklist template."; exit 1)
-          echo "$BODY" | grep -qi "\- \[ \] YES" || (echo "::error::Missing checklist checkboxes."; exit 1)
+
+          # Require checklist title (ASCII-safe)
+          echo "$BODY" | grep -qi "Final Gate" || (echo "::error::Missing 'Final Gate' checklist section."; exit 1)
+          echo "$BODY" | grep -qi "Still Ecosystem PR Checklist" || (echo "::error::Missing checklist title 'Still Ecosystem PR Checklist'."; exit 1)
+
+          # Require at least one checkbox line (ASCII-safe)
+          echo "$BODY" | grep -qi "\- \[ \] YES" || (echo "::error::Missing checklist checkboxes ('- [ ] YES')."; exit 1)
+
           echo "Checklist present."
+

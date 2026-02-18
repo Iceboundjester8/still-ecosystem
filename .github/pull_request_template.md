@@ -1,4 +1,4 @@
-# Final Gate — Still Ecosystem PR Checklist
+﻿# Final Gate — Still Ecosystem PR Checklist
 
 ## Canon Preservation
 - [ ] YES — I did not delete canon; changes are additive (Snapshot/Amendments/Changelog).
@@ -14,7 +14,7 @@
 
 ## Docs + Index
 - [ ] YES — Relevant docs updated under Still – MANUAL architecture.
-- [ ] YES — `02_Codex/99_Master_Index.md` updated if new docs were added.
+- [ ] YES — 02_Codex/99_Master_Index.md updated if new docs were added.
 
 ## Build / Sanity
 - [ ] YES — Repo is in a runnable state or changes are docs-only.
